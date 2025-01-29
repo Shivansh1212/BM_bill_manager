@@ -19,6 +19,7 @@ const Bills = () => {
   const [selectedBills, setSelectedBills] = useState([]);
   const [editId, setEditId] = useState(null);
   const [newAmount, setNewAmount] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   const calculateBillsToPay = () => {
     let sortedBills = [...bills].sort(
@@ -44,7 +45,14 @@ const Bills = () => {
     setNewAmount("");
   };
 
-  const chartData = bills.map((bill) => ({
+  const categories = ["All", ...new Set(bills.map((bill) => bill.category))];
+
+  const filteredBills =
+    selectedCategory === "All"
+      ? bills
+      : bills.filter((bill) => bill.category === selectedCategory);
+
+  const chartData = filteredBills.map((bill) => ({
     date: bill.date,
     amount: parseFloat(bill.text),
   }));
@@ -71,8 +79,27 @@ const Bills = () => {
         </button>
       </div>
 
-      {bills.length === 0 ? (
-        <p className="text-gray-500 text-center">No bills added yet.</p>
+      <div className="mb-4">
+        <label className="block text-gray-700 font-medium">
+          Filter by Category:
+        </label>
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        >
+          {categories.map((category, index) => (
+            <option key={index} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {filteredBills.length === 0 ? (
+        <p className="text-gray-500 text-center">
+          No bills found for this category.
+        </p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full border-collapse rounded-lg shadow-sm">
@@ -86,7 +113,7 @@ const Bills = () => {
               </tr>
             </thead>
             <tbody>
-              {bills.map((bill, index) => (
+              {filteredBills.map((bill, index) => (
                 <tr
                   key={bill.id}
                   className={`border-b ${
