@@ -2,7 +2,15 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { removeBill, editBill } from "../features/bill_manager/billsSlice";
 import { FiTrash2 } from "react-icons/fi";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 const Bills = () => {
   const bills = useSelector((state) => state.bills);
@@ -13,10 +21,12 @@ const Bills = () => {
   const [newAmount, setNewAmount] = useState("");
 
   const calculateBillsToPay = () => {
-    let sortedBills = [...bills].sort((a, b) => parseFloat(a.text) - parseFloat(b.text));
+    let sortedBills = [...bills].sort(
+      (a, b) => parseFloat(a.text) - parseFloat(b.text)
+    );
     let total = 0;
     let selected = [];
-    
+
     for (let bill of sortedBills) {
       if (total + parseFloat(bill.text) <= budget) {
         total += parseFloat(bill.text);
@@ -34,13 +44,17 @@ const Bills = () => {
     setNewAmount("");
   };
 
-  const chartData = bills.map(bill => ({ date: bill.date, amount: parseFloat(bill.text) }));
+  const chartData = bills.map((bill) => ({
+    date: bill.date,
+    amount: parseFloat(bill.text),
+  }));
 
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-xl rounded-2xl border border-gray-200">
-      <h2 className="text-2xl font-bold text-gray-800 text-center mb-5">Your Bills</h2>
-      
-      {/* Budget Input */}
+      <h2 className="text-2xl font-bold text-gray-800 text-center mb-5">
+        Your Bills
+      </h2>
+
       <div className="mb-4 flex justify-between items-center">
         <input
           type="number"
@@ -56,7 +70,7 @@ const Bills = () => {
           Calculate Bills to Pay
         </button>
       </div>
-      
+
       {bills.length === 0 ? (
         <p className="text-gray-500 text-center">No bills added yet.</p>
       ) : (
@@ -76,7 +90,11 @@ const Bills = () => {
                 <tr
                   key={bill.id}
                   className={`border-b ${
-                    selectedBills.includes(bill.id) ? "bg-green-200" : index % 2 === 0 ? "bg-gray-50" : "bg-gray-100"
+                    selectedBills.includes(bill.id)
+                      ? "bg-green-200"
+                      : index % 2 === 0
+                      ? "bg-gray-50"
+                      : "bg-gray-100"
                   } hover:bg-gray-200 transition`}
                 >
                   <td className="p-3 text-gray-800 font-semibold">
@@ -96,9 +114,19 @@ const Bills = () => {
                   <td className="p-3 text-gray-700">{bill.date}</td>
                   <td className="p-3 text-center">
                     {editId === bill.id ? (
-                      <button onClick={() => handleEdit(bill.id)} className="text-green-500 mr-2">✔</button>
+                      <button
+                        onClick={() => handleEdit(bill.id)}
+                        className="text-green-500 mr-2"
+                      >
+                        ✔
+                      </button>
                     ) : (
-                      <button onClick={() => setEditId(bill.id)} className="text-blue-500 mr-2">✎</button>
+                      <button
+                        onClick={() => setEditId(bill.id)}
+                        className="text-blue-500 mr-2"
+                      >
+                        ✎
+                      </button>
                     )}
                     <button
                       onClick={() => dispatch(removeBill(bill.id))}
@@ -114,10 +142,11 @@ const Bills = () => {
           </table>
         </div>
       )}
-      
-      {/* Time Series Chart */}
+
       <div className="mt-6">
-        <h3 className="text-lg font-semibold text-gray-800 text-center mb-3">Monthly Billing Cycle</h3>
+        <h3 className="text-lg font-semibold text-gray-800 text-center mb-3">
+          Monthly Billing Cycle
+        </h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -133,4 +162,3 @@ const Bills = () => {
 };
 
 export default Bills;
-
